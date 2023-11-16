@@ -2,15 +2,15 @@
 03 CREATE PANDAS DATAFRAMES
 
 Create pandas dataframes for blocs of max_entries entries in the database.
-The dataframes will be exported as csv to database_path/dataframes
+The dataframes will be exported as csv to database_path/dataframes/all_files_metadata
 """
 
 import utils
 import os
 import pandas as pd
+import csv
 
-#database_path = "/Users/artzoydstudio/Documents/GitHub/batch-sample-analysis/database"
-database_path = "/Users/artzoydstudio/Documents/GitHub/batch-sample-analysis/database/HD 2/Carmaux 2015 PADSsos"
+database_path = "/Users/artzoydstudio/Documents/GitHub/batch-sample-analysis/database"
 max_entries = 1000
 
 def process(db_path, num_entries):
@@ -26,7 +26,7 @@ def process(db_path, num_entries):
                     data_frame_idx = count % num_entries
                     if data_frame_idx == 0:
                         if df_index != -1:
-                            save_data_frame(current_data_frame, os.path.join(db_path, "dataframes"), df_index)
+                            save_data_frame(current_data_frame, os.path.join(db_path, "dataframes", "all_files_metadata"), df_index)
                         current_data_frame = create_empty_dataframe()
                         df_index = df_index + 1
                     print(count, data_frame_idx)
@@ -36,7 +36,7 @@ def process(db_path, num_entries):
                     count = count + 1
                 else:
                     print(f"\t{metadata_path} had no audio data.")
-    save_data_frame(current_data_frame, os.path.join(db_path, "dataframes"), df_index)
+    save_data_frame(current_data_frame, os.path.join(db_path, "dataframes", "all_files_metadata"), df_index)
 
 def create_empty_dataframe():
     df = pd.DataFrame()
@@ -49,18 +49,19 @@ def create_empty_dataframe():
     return df
 
 def append_to_dataframe(db_path, df, data):
-    df = df.append({
+    to_append = {
         "database_path" : db_path,
         "duration" : data["audio_data"]["duration"],
         "samples" : data["audio_data"]["samples"],
         "sample_rate" : data["audio_data"]["sample_rate"],
         "channels" : data["audio_data"]["channels"],
         "bit_depth" : data["audio_data"]["bit_depth"]
-    }, ignore_index = True)
+    }
+    df.loc[len(df)] = to_append
 
 def save_data_frame(df, root_path, idx):
     if os.path.isdir(root_path) == False:
         os.makedirs(root_path)
-    df.to_csv(os.path.join(root_path, f"bloc_{str(idx)}.csv"), index = False)
+    df.to_csv(os.path.join(root_path, f"bloc_{str(idx)}.csv"), index = False, quotechar = '"', quoting = csv.QUOTE_NONNUMERIC)
 
 process(database_path, max_entries)
