@@ -10,9 +10,9 @@ def collect_files(path, accepted = []):
                 final_list.append(os.path.join(root, file))
     return final_list
 
-def write_json(content, path):
+def write_json(content, path, indent = 0):
     with open(path, 'w', encoding='utf-8') as f:
-        json.dump(content, f, ensure_ascii=False)
+        json.dump(content, f, ensure_ascii=False, indent=indent)
 
 def read_json(path):
     with open(path, 'r') as f:
