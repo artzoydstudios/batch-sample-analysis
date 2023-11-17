@@ -3,3 +3,4 @@ scripts/__pycache__/
 database/
 .DS_Store
 backups/
+pre-mfcc/

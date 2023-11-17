@@ -27,7 +27,7 @@ def process(df_src):
             data_save_path = os.path.join(row["database_path"], f"{analysis_filename}.npy")
             if os.path.isfile(data_save_path) == False:
                 print(f"Performing MFCC analysis for {audio_path}...")
-                mfcc = fluid_wrapper.mfcc(metadata["file_path"])
+                mfcc = fluid_wrapper.mfcc(metadata["file_path"], metadata["audio_data"]["channels"])
                 stats = fluid_wrapper.stats(mfcc)
                 res = fluid_wrapper._wave_to_np(stats)
                 np.save(data_save_path, res)
